@@ -1,0 +1,40 @@
+spring:
+  application:
+    name: DocuFlow
+
+  ldap:
+    urls:
+      - ldap://localhost:10389
+    base: ou=system
+    username: uid=admin,ou=system
+    password: secret
+
+
+
+  security:
+    ldap:
+      authorities:
+        group-search-base: ou=groups      
+        group-search-filter: (uniqueMember={0}) 
+
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/docuflow
+    username: postgres
+    password: Vishal@4545
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+
+  data:
+    mongodb:
+      uri: mongodb://localhost:27017/docuflowdb
+server:
+  port: 9191
