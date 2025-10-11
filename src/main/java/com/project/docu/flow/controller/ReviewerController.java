@@ -38,10 +38,12 @@ public class ReviewerController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
                     .body(Map.of("error", "Unauthenticated"));
         }
-        List<DocumentMetadata> forApprover = docService.findForApprover();
+        List<DocumentMetadata> forApprover = docService.findForReviewer();
         return ResponseEntity.ok(forApprover);
         
     }
+    
+    //forward, request changes, reject
     
     @PutMapping("/{documentId}/forward")
     public ResponseEntity<?> requestChanges(
@@ -60,10 +62,13 @@ public class ReviewerController {
             
             if (action.equalsIgnoreCase("forwarded")) {
                 documentMetadata.setStatus("FORWARDED");
+                documentMetadata.setForwardedAt(java.time.LocalDateTime.now());
             } else if (action.equalsIgnoreCase("changes requested")) {
                 documentMetadata.setStatus("CHANGES_REQUESTED");
             } else if (action.equalsIgnoreCase("rejected")) {
                 documentMetadata.setStatus("REJECTED");
+                documentMetadata.setRejectedBy(authentication.getName());
+                documentMetadata.setRejectedAt(java.time.LocalDateTime.now());
             }
             
             // Simpler list handling

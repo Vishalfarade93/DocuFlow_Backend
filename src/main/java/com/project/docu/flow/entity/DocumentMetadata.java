@@ -50,11 +50,24 @@ public class DocumentMetadata {
 	private LocalDateTime submittedAt;
 	@Column(name = "reviewed_by")
 	private String reviewedBy;
+	
+	
+	@Column(name = "forwarded_at")
+	private LocalDateTime forwardedAt;
+	
+	
 	@Column(name = "approved_by")
 	private String approvedBy;
+	@Column(name = "approved_at")
+	private String approvedAt;
+	@Column(name = "rejected_by")
+	private String rejectedBy;
+	@Column(name = "rejected_at")
+	private LocalDateTime rejectedAt;
 	@JdbcTypeCode(SqlTypes.JSON)
 	@Column(name = "review_comments", columnDefinition = "jsonb")
 	private List<String> reviewComments = new ArrayList<>();
+	
 	
 
 }

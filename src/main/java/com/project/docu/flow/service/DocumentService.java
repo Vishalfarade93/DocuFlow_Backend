@@ -94,8 +94,14 @@ public class DocumentService {
         return metadataRepo.findByStatusIn(statuses);
     }
     
-    public List<DocumentMetadata> findForApprover() {
+    public List<DocumentMetadata> findForReviewer() {
         return findByStatuses(Arrays.asList("SUBMITTED", "FORWARDED", "CHANGES_REQUESTED","REJECTED"));
     }
+    
+    //for approver
+    public List<DocumentMetadata> findForApprover() {
+        return findByStatuses(Arrays.asList( "FORWARDED","APPROVER_REJECTED","APPROVED"));
+    }
+    
 
 }
