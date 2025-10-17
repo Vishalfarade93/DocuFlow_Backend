@@ -29,12 +29,17 @@ public class SecurityConfig {
 	@Bean
 	public SecurityFilterChain filterchain(HttpSecurity http) throws Exception {
 		return http.cors(cors -> cors.configure(http)).csrf(csrf -> csrf.disable())
-				.authorizeHttpRequests(auth -> auth.requestMatchers("/submit", "/submit/**")
+				.authorizeHttpRequests(auth -> auth
+						.requestMatchers("/ws-notifications/**").permitAll()
+					    .requestMatchers("/api/notifications/**").authenticated()
+					    .requestMatchers("/api/test/pulsar/**").permitAll()
+						.requestMatchers("/submit", "/submit/**")
 						.hasAnyAuthority("ROLE_SUBMITTERS", "Submitters", "SUBMITTERS")
 						.requestMatchers("/review", "/review/**")
 						.hasAnyAuthority("ROLE_REVIEWERS", "Reviewers", "REVIEWERS")
 						.requestMatchers("/approve", "/approve/**")
-						.hasAnyAuthority("ROLE_APPROVERS", "Approvers", "APPROVERS").requestMatchers("/", "/login")
+						.hasAnyAuthority("ROLE_APPROVERS", "Approvers", "APPROVERS")
+						.requestMatchers("/", "/login")
 						.permitAll().requestMatchers("/api/me").authenticated().anyRequest().authenticated())
 				.formLogin(form -> form.loginProcessingUrl("/login").usernameParameter("username")
 						.passwordParameter("password").successHandler(authenticationSuccessHandler())

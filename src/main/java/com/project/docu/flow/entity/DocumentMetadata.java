@@ -30,9 +30,9 @@ public class DocumentMetadata {
 	@Column(nullable = false)
 	private String title;
 	@Column(nullable = false)
-	private String documentId; // Reference to MongoDB document
+	private String documentId; 
 	@Column(nullable = false)
-	private String owner; // Username from LDAP
+	private String owner; 
 	@Column(nullable = false)
 	private String status; // DRAFT, SUBMITTED, CHANGES_REQUESTED,,FORWORDED APPROVED, REJECTED
 	private String description;

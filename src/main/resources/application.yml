@@ -9,13 +9,11 @@ spring:
     username: uid=admin,ou=system
     password: secret
 
-
-
   security:
     ldap:
       authorities:
-        group-search-base: ou=groups      
-        group-search-filter: (uniqueMember={0}) 
+        group-search-base: ou=groups
+        group-search-filter: (uniqueMember={0})
 
   datasource:
     driver-class-name: org.postgresql.Driver
@@ -26,7 +24,7 @@ spring:
   jpa:
     hibernate:
       ddl-auto: update
-    show-sql: true
+    show-sql: false
     properties:
       hibernate:
         format_sql: true
@@ -36,5 +34,68 @@ spring:
   data:
     mongodb:
       uri: mongodb://localhost:27017/docuflowdb
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: faradevishal@gmail.com      
+    password: lsao osez fahr lydl       
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+mail:
+  from: faradevishal@gmail.com
+
 server:
   port: 9191
+
+# ===== Apache Pulsar Configuration =====
+pulsar:
+  # Service URL for Pulsar broker
+  service-url: pulsar://localhost:6650
+  
+  # Admin URL for Pulsar admin operations (optional)
+  admin-url: http://localhost:8080
+  
+  # Namespace configuration
+  tenant: public
+  namespace: default
+  
+  # Topic configuration
+  topics:
+    document-events: persistent://public/default/docuflow-events
+  
+  # Producer configuration
+  producer:
+    send-timeout-ms: 30000
+    block-if-queue-full: true
+    batching-enabled: true
+    batching-max-publish-delay-ms: 10
+    max-pending-messages: 1000
+  
+  # Consumer configuration
+  consumer:
+    subscription-name: docuflow-event-consumer
+    subscription-type: Shared
+    ack-timeout-ms: 10000
+    consumer-name: docuflow-consumer-1
+    receive-queue-size: 1000
+  
+  # Connection settings
+  connection:
+    operation-timeout-ms: 30000
+    connection-timeout-ms: 10000
+    io-threads: 10
+    listener-threads: 10
+    enable-tls: false
+    enable-authentication: false
+
+# Logging configuration
+logging:
+  level:
+    org.apache.pulsar: INFO
+    com.project.docu.flow.service.pulsar: DEBUG
+    com.project.docu.flow: INFO
