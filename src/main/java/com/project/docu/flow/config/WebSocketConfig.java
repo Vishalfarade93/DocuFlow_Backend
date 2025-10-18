@@ -7,7 +7,7 @@ import org.springframework.web.socket.config.annotation.StompEndpointRegistry;
 import org.springframework.web.socket.config.annotation.WebSocketMessageBrokerConfigurer;
 
 /**
- * WebSocket configuration for real-time notifications
+ * WebSocket configuration
  */
 @Configuration
 @EnableWebSocketMessageBroker
@@ -15,7 +15,7 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void configureMessageBroker(MessageBrokerRegistry config) {
-        // Enable a simple in-memory message broker
+        // in-memory message broker
         config.enableSimpleBroker("/topic", "/queue");
         
         // Set application destination prefix
@@ -27,9 +27,9 @@ public class WebSocketConfig implements WebSocketMessageBrokerConfigurer {
 
     @Override
     public void registerStompEndpoints(StompEndpointRegistry registry) {
-        // Register STOMP endpoint for WebSocket connection
+        // Register STOMP 
         registry.addEndpoint("/ws-notifications")
                 .setAllowedOriginPatterns("*")
-                .withSockJS(); // Fallback for browsers that don't support WebSocket
+                .withSockJS(); // Fallback
     }
 }

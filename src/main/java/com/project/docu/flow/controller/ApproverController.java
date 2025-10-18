@@ -117,9 +117,7 @@ public class ApproverController {
         }
     }
 
-    /**
-     * Download document
-     */
+
     @GetMapping("/{metadataId}/download")
     public ResponseEntity<?> download(@PathVariable("metadataId") Long metadataId, Authentication authentication) {
         Optional<DocumentMetadata> metaOpt = docService.getMetadata(metadataId);
@@ -141,9 +139,7 @@ public class ApproverController {
         return new ResponseEntity<>(content.getContent(), headers, HttpStatus.OK);
     }
 
-    /**
-     * Publish document approval event to Pulsar
-     */
+
     private void publishApprovalEvent(DocumentMetadata metadata, String previousStatus, 
                                      String approver, String comments) {
         if (pulsarEventPublisher == null) {
@@ -184,9 +180,7 @@ public class ApproverController {
         }
     }
 
-    /**
-     * Publish document rejection event to Pulsar
-     */
+ 
     private void publishRejectionEvent(DocumentMetadata metadata, String previousStatus, 
                                       String rejector, String comments) {
         if (pulsarEventPublisher == null) {
@@ -227,9 +221,7 @@ public class ApproverController {
         }
     }
 
-    /**
-     * Map string status to WorkflowStatus enum
-     */
+
     private DocumentEvent.WorkflowStatus mapToWorkflowStatus(String status) {
         if (status == null) {
 			return DocumentEvent.WorkflowStatus.UNDER_REVIEW;

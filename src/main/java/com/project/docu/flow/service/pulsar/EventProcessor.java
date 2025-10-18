@@ -12,7 +12,7 @@ import com.project.docu.flow.service.NotificationService;
 
 /**
  * Processes document events received from Pulsar
- * Routes events to appropriate handlers (notifications, audit logs, etc.)
+ * Routes events to appropriate handlers
  */
 @Service
 public class EventProcessor {
@@ -25,18 +25,14 @@ public class EventProcessor {
     @Autowired(required = false)
     private AuditLogService auditLogService;
 
-    /**
-     * Main event processing method
-     * Routes events to appropriate handlers based on event type
-     */
     public void processEvent(DocumentEvent event, Message<byte[]> message) {
         logger.info("Processing event: {} for document: {}", event.getEventType(), event.getDocumentId());
 
         try {
-            // Log the event for audit trail
+            // log 
             logAuditEvent(event);
 
-            // Route to appropriate handler based on event type
+            
             switch (event.getEventType()) {
                 case DOCUMENT_SUBMITTED:
                     handleDocumentSubmitted(event);
@@ -85,24 +81,15 @@ public class EventProcessor {
         }
     }
 
-    /**
-     * Handle document submitted event
-     */
     private void handleDocumentSubmitted(DocumentEvent event) {
         logger.info("Handling DOCUMENT_SUBMITTED event for document {}", event.getDocumentId());
         
-        // Send notification to reviewers/approvers
         if (notificationService != null) {
             notificationService.notifyDocumentSubmitted(event);
         }
         
-        // Additional business logic can be added here
-        // e.g., trigger workflow automation, send emails, etc.
     }
 
-    /**
-     * Handle document under review event
-     */
     private void handleDocumentUnderReview(DocumentEvent event) {
         logger.info("Handling DOCUMENT_UNDER_REVIEW event for document {}", event.getDocumentId());
         
@@ -111,9 +98,6 @@ public class EventProcessor {
         }
     }
 
-    /**
-     * Handle document approved event
-     */
     private void handleDocumentApproved(DocumentEvent event) {
         logger.info("Handling DOCUMENT_APPROVED event for document {}", event.getDocumentId());
         
@@ -121,7 +105,7 @@ public class EventProcessor {
             notificationService.notifyDocumentApproved(event);
         }
         
-        // Additional logic: trigger next stage in workflow, archive document, etc.
+        
     }
 
     /**
@@ -135,9 +119,6 @@ public class EventProcessor {
         }
     }
 
-    /**
-     * Handle revision requested event
-     */
     private void handleRevisionRequested(DocumentEvent event) {
         logger.info("Handling DOCUMENT_REVISION_REQUESTED event for document {}", event.getDocumentId());
         
@@ -146,9 +127,7 @@ public class EventProcessor {
         }
     }
 
-    /**
-     * Handle reviewer assigned event
-     */
+
     private void handleReviewerAssigned(DocumentEvent event) {
         logger.info("Handling REVIEWER_ASSIGNED event for document {}", event.getDocumentId());
         
@@ -157,9 +136,7 @@ public class EventProcessor {
         }
     }
 
-    /**
-     * Handle approver assigned event
-     */
+
     private void handleApproverAssigned(DocumentEvent event) {
         logger.info("Handling APPROVER_ASSIGNED event for document {}", event.getDocumentId());
         
@@ -168,9 +145,7 @@ public class EventProcessor {
         }
     }
 
-    /**
-     * Handle comment added event
-     */
+  
     private void handleCommentAdded(DocumentEvent event) {
         logger.info("Handling COMMENT_ADDED event for document {}", event.getDocumentId());
         
@@ -179,14 +154,12 @@ public class EventProcessor {
         }
     }
 
-    /**
-     * Handle generic events (fallback)
-     */
+   
     private void handleGenericEvent(DocumentEvent event) {
         logger.info("Handling generic event {} for document {}", 
                 event.getEventType(), event.getDocumentId());
         
-        // Log to console or perform default action
+       
         logEventDetails(event);
     }
 
@@ -197,7 +170,7 @@ public class EventProcessor {
         if (auditLogService != null) {
             auditLogService.logEvent(event);
         } else {
-            // Fallback: log to console
+            
             logger.info("AUDIT: Event={}, Document={}, User={}, Status={} -> {}", 
                     event.getEventType(), 
                     event.getDocumentId(), 

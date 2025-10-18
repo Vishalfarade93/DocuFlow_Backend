@@ -29,9 +29,7 @@ import com.project.docu.flow.model.events.DocumentEvent;
 import com.project.docu.flow.service.DocumentService;
 import com.project.docu.flow.service.pulsar.PulsarEventPublisher;
 
-/**
- * Controller for reviewer operations with Pulsar event integration
- */
+
 @RestController
 @RequestMapping("/review")
 public class ReviewerController {
@@ -47,9 +45,7 @@ public class ReviewerController {
         this.docService = docService;
     }
 
-    /**
-     * Get documents for reviewer
-     */
+//all events 
     @GetMapping("/me")
     public ResponseEntity<?> getDocumentsForReviewer(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -61,9 +57,7 @@ public class ReviewerController {
         return ResponseEntity.ok(forReviewer);
     }
     
-    /**
-     * Forward, reject, or request changes for a document
-     */
+
     @PutMapping("/{documentId}/forward")
     public ResponseEntity<?> reviewDocument(
             @PathVariable Long documentId,
@@ -171,9 +165,6 @@ public class ReviewerController {
         }
     }
 
-    /**
-     * Download document
-     */
     @GetMapping("/{metadataId}/download")
     public ResponseEntity<?> download(@PathVariable("metadataId") Long metadataId, Authentication authentication) {
         Optional<DocumentMetadata> metaOpt = docService.getMetadata(metadataId);
@@ -195,9 +186,7 @@ public class ReviewerController {
         return new ResponseEntity<>(content.getContent(), headers, HttpStatus.OK);
     }
 
-    /**
-     * Publish document forward event
-     */
+
     private void publishForwardEvent(DocumentMetadata metadata, String previousStatus,
                                      String reviewer, String comments) {
         if (pulsarEventPublisher == null) {
@@ -238,9 +227,6 @@ public class ReviewerController {
         }
     }
 
-    /**
-     * Publish reviewer rejection event
-     */
     private void publishReviewerRejectionEvent(DocumentMetadata metadata, String previousStatus,
                                                String reviewer, String comments) {
         if (pulsarEventPublisher == null) {
@@ -274,9 +260,7 @@ public class ReviewerController {
         }
     }
 
-    /**
-     * Publish revision request event
-     */
+
     private void publishRevisionRequestEvent(DocumentMetadata metadata, String previousStatus,
                                             String reviewer, String comments) {
         if (pulsarEventPublisher == null) {
@@ -310,9 +294,6 @@ public class ReviewerController {
         }
     }
 
-    /**
-     * Map string status to WorkflowStatus enum
-     */
     private DocumentEvent.WorkflowStatus mapToWorkflowStatus(String status) {
         if (status == null) {
 			return DocumentEvent.WorkflowStatus.SUBMITTED;

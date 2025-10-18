@@ -22,7 +22,6 @@ import jakarta.annotation.PreDestroy;
 
 /**
  * Service responsible for consuming document workflow events from Pulsar topics
- * Processes events asynchronously and triggers appropriate actions
  */
 @Service
 public class PulsarEventConsumer {
@@ -59,9 +58,6 @@ public class PulsarEventConsumer {
     private Consumer<byte[]> consumer;
     private volatile boolean running = false;
 
-    /**
-     * Initialize and start the Pulsar consumer after bean construction
-     */
     @PostConstruct
     public void init() {
         try {
@@ -80,7 +76,7 @@ public class PulsarEventConsumer {
             
             logger.info("Pulsar consumer initialized successfully");
             
-            // Start consuming messages in a separate thread
+           
             startConsuming();
             
         } catch (PulsarClientException e) {
@@ -89,9 +85,7 @@ public class PulsarEventConsumer {
         }
     }
 
-    /**
-     * Start consuming messages from Pulsar
-     */
+
     private void startConsuming() {
         running = true;
         Thread consumerThread = new Thread(() -> {
@@ -99,7 +93,7 @@ public class PulsarEventConsumer {
             
             while (running) {
                 try {
-                    // Receive message with timeout
+                  
                     Message<byte[]> message = consumer.receive(100, TimeUnit.MILLISECONDS);
                     
                     if (message != null) {
@@ -109,7 +103,7 @@ public class PulsarEventConsumer {
                 } catch (PulsarClientException e) {
                     if (running) {
                         logger.error("Error receiving message from Pulsar", e);
-                        // Add exponential backoff if needed
+                   
                         try {
                             Thread.sleep(1000);
                         } catch (InterruptedException ie) {
@@ -127,25 +121,18 @@ public class PulsarEventConsumer {
         consumerThread.start();
     }
 
-    /**
-     * Process a received Pulsar message
-     */
     private void processMessage(Message<byte[]> message) {
         try {
-            // Deserialize the event
+         
             DocumentEvent event = objectMapper.readValue(message.getValue(), DocumentEvent.class);
             
             logger.info("Received event {} for document {} from Pulsar", 
                     event.getEventType(), event.getDocumentId());
-            
-            // Extract message properties
             String eventType = message.getProperty("eventType");
             String documentId = message.getProperty("documentId");
-            
-            // Process the event
+
             eventProcessor.processEvent(event, message);
-            
-            // Acknowledge the message after successful processing
+
             consumer.acknowledge(message);
             
             logger.debug("Successfully processed and acknowledged message {} for document {}", 
@@ -153,8 +140,7 @@ public class PulsarEventConsumer {
             
         } catch (Exception e) {
             logger.error("Failed to process message {}: {}", message.getMessageId(), e.getMessage(), e);
-            
-            // Negative acknowledge to requeue the message
+
             try {
                 consumer.negativeAcknowledge(message);
                 logger.info("Message {} negatively acknowledged for reprocessing", message.getMessageId());
@@ -164,9 +150,7 @@ public class PulsarEventConsumer {
         }
     }
 
-    /**
-     * Convert string subscription type to enum
-     */
+
     private SubscriptionType getSubscriptionType() {
         try {
             return SubscriptionType.valueOf(subscriptionType);
@@ -176,9 +160,6 @@ public class PulsarEventConsumer {
         }
     }
 
-    /**
-     * Stop the consumer gracefully on application shutdown
-     */
     @PreDestroy
     public void cleanup() {
         running = false;

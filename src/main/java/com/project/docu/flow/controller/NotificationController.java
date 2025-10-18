@@ -30,7 +30,6 @@ public class NotificationController {
 
     /**
      * Get all notifications for authenticated user
-     * GET /api/notifications
      */
     @GetMapping
     public ResponseEntity<?> getAllNotifications(Authentication authentication) {
@@ -58,10 +57,7 @@ public class NotificationController {
         }
     }
 
-    /**
-     * Get unread notifications only
-     * GET /api/notifications/unread
-     */
+
     @GetMapping("/unread")
     public ResponseEntity<?> getUnreadNotifications(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -88,10 +84,7 @@ public class NotificationController {
         }
     }
 
-    /**
-     * Get unread notification count
-     * GET /api/notifications/unread/count
-     */
+ 
     @GetMapping("/unread/count")
     public ResponseEntity<?> getUnreadCount(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -117,10 +110,7 @@ public class NotificationController {
         }
     }
 
-    /**
-     * Mark a specific notification as read
-     * PUT /api/notifications/{id}/read
-     */
+
     @PutMapping("/{id}/read")
     public ResponseEntity<?> markAsRead(
             @PathVariable Long id,
@@ -155,10 +145,7 @@ public class NotificationController {
         }
     }
 
-    /**
-     * Mark all notifications as read
-     * PUT /api/notifications/mark-all-read
-     */
+    
     @PutMapping("/mark-all-read")
     public ResponseEntity<?> markAllAsRead(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -223,10 +210,7 @@ public class NotificationController {
         }
     }
 
-    /**
-     * Delete all notifications for user
-     * DELETE /api/notifications/clear-all
-     */
+   
     @DeleteMapping("/clear-all")
     public ResponseEntity<?> clearAllNotifications(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -252,10 +236,6 @@ public class NotificationController {
         }
     }
 
-    /**
-     * Health check endpoint
-     * GET /api/notifications/health
-     */
     @GetMapping("/health")
     public ResponseEntity<?> healthCheck() {
         Map<String, Object> response = new HashMap<>();
@@ -267,11 +247,7 @@ public class NotificationController {
         return ResponseEntity.ok(response);
     }
 
-    // ==================== Helper Methods ====================
 
-    /**
-     * Create error response map
-     */
     private Map<String, Object> createErrorResponse(String message) {
         Map<String, Object> error = new HashMap<>();
         error.put("success", false);

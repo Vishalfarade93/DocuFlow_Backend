@@ -20,34 +20,14 @@ public class AuditLogService {
                 event.getNewStatus(),
                 event.getTimestamp());
         
-        // TODO: Implement actual audit log persistence
         saveAuditLogToDatabase(event);
     }
 
-    /**
-     * Save audit log entry to database (PostgreSQL)
-     * TODO: Implement actual database persistence
-     */
+
     private void saveAuditLogToDatabase(DocumentEvent event) {
         logger.debug("Persisting audit log entry for event: {}", event.getEventId());
         
-        /*
+      //save log to the database future scope.
         
-        AuditLog auditLog = AuditLog.builder()
-            .eventId(event.getEventId())
-            .eventType(event.getEventType().name())
-            .documentId(event.getDocumentId())
-            .documentTitle(event.getDocumentTitle())
-            .previousStatus(event.getPreviousStatus() != null ? event.getPreviousStatus().name() : null)
-            .newStatus(event.getNewStatus().name())
-            .triggeredBy(event.getTriggeredBy())
-            .triggeredByName(event.getTriggeredByName())
-            .timestamp(event.getTimestamp())
-            .comments(event.getComments())
-            .metadata(event.getMetadata())
-            .build();
-        
-        auditLogRepository.save(auditLog);
-        */
     }
 }

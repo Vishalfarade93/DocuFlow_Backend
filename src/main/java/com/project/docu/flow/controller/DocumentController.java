@@ -1,4 +1,4 @@
-package com.project.docu.flow.controller;
+ package com.project.docu.flow.controller;
 
 import java.io.IOException;
 import java.time.LocalDateTime;
@@ -49,9 +49,7 @@ public class DocumentController {
         this.docService = docService;
     }
 
-    /**
-     * Upload document
-     */
+  //upload document
     @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> upload(@RequestParam("file") MultipartFile file,
             @RequestParam(value = "title", required = false) String title,
@@ -85,9 +83,7 @@ public class DocumentController {
         }
     }
 
-    /**
-     * Get all documents by owner
-     */
+
     @GetMapping("/my")
     public ResponseEntity<?> listMyDocuments(Authentication authentication) {
         if (authentication == null || !authentication.isAuthenticated()) {
@@ -100,9 +96,7 @@ public class DocumentController {
         return ResponseEntity.ok(list);
     }
 
-    /**
-     * Download document by metadataId
-     */
+//download
     @GetMapping("/{metadataId}/download")
     public ResponseEntity<?> download(@PathVariable("metadataId") Long metadataId, 
             Authentication authentication) {
@@ -128,9 +122,7 @@ public class DocumentController {
         return new ResponseEntity<>(content.getContent(), headers, HttpStatus.OK);
     }
 
-    /**
-     * Update document with Pulsar event publishing
-     */
+  
     @PutMapping("/{metadataId}/update")
     public ResponseEntity<?> updateDocument(
             @PathVariable Long metadataId,
@@ -219,9 +211,6 @@ public class DocumentController {
         }
     }
 
-    /**
-     * Delete document by metadataId
-     */
     @DeleteMapping("/{metadataId}/delete")
     public ResponseEntity<?> deleteDocument(@PathVariable("metadataId") Long metadataId, 
             Authentication authentication) {
@@ -246,9 +235,6 @@ public class DocumentController {
         return ResponseEntity.ok(Map.of("message", "Document deleted successfully"));
     }
 
-    /**
-     * Helper method to publish document update events
-     */
     private void publishDocumentUpdateEvent(DocumentMetadata metadata, String previousStatus, 
                                            String newStatus, String userId, String comments) {
         if (pulsarEventPublisher == null) {
@@ -292,9 +278,7 @@ public class DocumentController {
         }
     }
 
-    /**
-     * Helper method to publish document delete events
-     */
+  
     private void publishDocumentDeleteEvent(DocumentMetadata metadata, String userId) {
         if (pulsarEventPublisher == null) {
             return;
@@ -327,9 +311,7 @@ public class DocumentController {
         }
     }
 
-    /**
-     * Map string status to EventType
-     */
+
     private DocumentEvent.EventType determineEventType(String status) {
         if (status == null) {
             return DocumentEvent.EventType.DOCUMENT_UPDATED;
@@ -351,9 +333,7 @@ public class DocumentController {
         }
     }
 
-    /**
-     * Map string status to WorkflowStatus enum
-     */
+
     private DocumentEvent.WorkflowStatus mapToWorkflowStatus(String status) {
         if (status == null) {
             return DocumentEvent.WorkflowStatus.DRAFT;

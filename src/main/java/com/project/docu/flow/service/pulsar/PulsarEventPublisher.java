@@ -53,10 +53,6 @@ public class PulsarEventPublisher {
     private int maxPendingMessages;
 
     private Producer<byte[]> producer;
-
-    /**
-     * Initialize the Pulsar producer after bean construction
-     */
     @PostConstruct
     public void init() {
         try {
@@ -79,19 +75,13 @@ public class PulsarEventPublisher {
         }
     }
 
-    /**
-     * Publishes a document event to Pulsar synchronously
-     * 
-     * @param event The document event to publish
-     * @return MessageId of the published message
-     * @throws Exception if publishing fails
-     */
+ 
     public MessageId publishEvent(DocumentEvent event) throws Exception {
         try {
             byte[] payload = objectMapper.writeValueAsBytes(event);
             
             MessageId messageId = producer.newMessage()
-                    .key(event.getDocumentId()) // Use document ID as message key for ordering
+                    .key(event.getDocumentId()) 
                     .property("eventType", event.getEventType().name())
                     .property("documentId", event.getDocumentId())
                     .property("triggeredBy", event.getTriggeredBy())
@@ -111,12 +101,6 @@ public class PulsarEventPublisher {
         }
     }
 
-    /**
-     * Publishes a document event to Pulsar asynchronously
-     * 
-     * @param event The document event to publish
-     * @return CompletableFuture containing the MessageId
-     */
     public CompletableFuture<MessageId> publishEventAsync(DocumentEvent event) {
         try {
             byte[] payload = objectMapper.writeValueAsBytes(event);
@@ -150,9 +134,6 @@ public class PulsarEventPublisher {
         }
     }
 
-    /**
-     * Close the producer gracefully on application shutdown
-     */
     @PreDestroy
     public void cleanup() {
         if (producer != null) {

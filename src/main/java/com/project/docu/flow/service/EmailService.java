@@ -22,7 +22,7 @@ public class EmailService {
             System.err.println(" MailSender not configured properly!");
             return;
         }
-
+        
         try {
             SimpleMailMessage message = new SimpleMailMessage();
             if (fromAddress != null) {

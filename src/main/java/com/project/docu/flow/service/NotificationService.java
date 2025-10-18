@@ -50,7 +50,7 @@ public class NotificationService {
     }
 
 
-    // ==================== Event Handlers ====================
+    //  Event Handlers
 
 
     public void notifyDocumentSubmitted(DocumentEvent event) {
@@ -60,7 +60,7 @@ public class NotificationService {
         String message = String.format("New document '%s' submitted by %s and awaiting review", 
                 event.getDocumentTitle(), event.getTriggeredByName());
         
-        // Notify all reviewers
+        // Notify all
         List<String> reviewers = getReviewersList();
         for (String reviewer : reviewers) {
             sendNotification(event, reviewer, message, "DOCUMENT_SUBMITTED", "/review");
@@ -69,7 +69,7 @@ public class NotificationService {
 
 
     public void notifyDocumentUnderReview(DocumentEvent event) {
-        log.info("👁️ Notification: Document '{}' under review", event.getDocumentTitle());
+        log.info(" Notification: Document '{}' under review", event.getDocumentTitle());
         
         // Notify approvers
         String approverMessage = String.format("Document '%s' forwarded for your approval", 
@@ -91,7 +91,7 @@ public class NotificationService {
 
 
     public void notifyDocumentApproved(DocumentEvent event) {
-        log.info("✅ Notification: Document '{}' approved", event.getDocumentTitle());
+        log.info(" Notification: Document '{}' approved", event.getDocumentTitle());
         
         String owner = getDocumentOwner(event.getDocumentId());
         if (owner != null) {
@@ -103,7 +103,7 @@ public class NotificationService {
 
 
     public void notifyDocumentRejected(DocumentEvent event) {
-        log.info("❌ Notification: Document '{}' rejected", event.getDocumentTitle());
+        log.info(" Notification: Document '{}' rejected", event.getDocumentTitle());
         
         String owner = getDocumentOwner(event.getDocumentId());
         if (owner != null) {
@@ -121,7 +121,7 @@ public class NotificationService {
      * Handle revision requested event
      */
     public void notifyRevisionRequested(DocumentEvent event) {
-        log.info("🔄 Notification: Changes requested for '{}'", event.getDocumentTitle());
+        log.info(" Notification: Changes requested for '{}'", event.getDocumentTitle());
         
         String owner = getDocumentOwner(event.getDocumentId());
         if (owner != null) {
@@ -137,7 +137,7 @@ public class NotificationService {
 
 
     public void notifyReviewerAssigned(DocumentEvent event) {
-        log.info("👤 Notification: Reviewer assigned to '{}'", event.getDocumentTitle());
+        log.info(" Notification: Reviewer assigned to '{}'", event.getDocumentTitle());
         
         String message = String.format("You have been assigned to review document '%s'", 
                 event.getDocumentTitle());
@@ -147,7 +147,7 @@ public class NotificationService {
 
  
     public void notifyApproverAssigned(DocumentEvent event) {
-        log.info("👤 Notification: Approver assigned to '{}'", event.getDocumentTitle());
+        log.info(" Notification: Approver assigned to '{}'", event.getDocumentTitle());
         
         String message = String.format("You have been assigned to approve document '%s'", 
                 event.getDocumentTitle());
@@ -159,7 +159,7 @@ public class NotificationService {
      * Handle comment added event
      */
     public void notifyCommentAdded(DocumentEvent event) {
-        log.info("💬 Notification: Comment added to '{}'", event.getDocumentTitle());
+        log.info(" Notification: Comment added to '{}'", event.getDocumentTitle());
         
         String owner = getDocumentOwner(event.getDocumentId());
         if (owner != null) {
@@ -170,11 +170,9 @@ public class NotificationService {
         }
     }
 
-    //  Notification Logic 
     private void sendNotification(DocumentEvent event, String recipientUser, 
                                   String message, String eventType, String actionUrl) {
         try {
-            // Build notification entity
             Notification notification = Notification.builder()
                     .eventId(event.getEventId())
                     .documentId(event.getDocumentId())
@@ -193,30 +191,30 @@ public class NotificationService {
             // Save to database
             if (notificationRepository != null) {
                 notification = notificationRepository.save(notification);
-                log.debug("💾 Notification saved to DB for user: {}", recipientUser);
+                log.debug(" Notification saved to DB for user: {}", recipientUser);
             } else {
-                log.warn("⚠️ NotificationRepository not available, notification not persisted");
+                log.warn(" NotificationRepository not available, notification not persisted");
             }
             
-            // Send via WebSocket for real-time delivery
+            // Send via WebSocket
+            
             if (messagingTemplate != null) {
                 messagingTemplate.convertAndSendToUser(
                         recipientUser, 
                         "/queue/notifications", 
                         notification
                 );
-                log.debug("📡 WebSocket notification sent to user: {}", recipientUser);
+                log.debug(" WebSocket notification sent to user: {}", recipientUser);
             } else {
-                log.warn("⚠️ WebSocket not available, real-time notification not sent");
+                log.warn(" WebSocket not available, real-time notification not sent");
             }
             
         } catch (Exception e) {
-            log.error("❌ Failed to send notification to user: {}", recipientUser, e);
+            log.error(" Failed to send notification to user: {}", recipientUser, e);
         }
         
      // After saving notification and sending WebSocket...
         try {
-            // Build email subject & text
             String subject = "DocuFlow: " + eventType.replace('_', ' ') + " - " + event.getDocumentTitle();
             StringBuilder sb = new StringBuilder();
             sb.append(message).append("\n\n");
@@ -253,13 +251,10 @@ public class NotificationService {
         );
     }
 
-    //Helper Methods 
-
-
     private String getDocumentOwner(String documentId) {
         try {
             if (documentMetadataRepository == null) {
-                log.warn("⚠️ DocumentMetadataRepository not available");
+                log.warn(" DocumentMetadataRepository not available");
                 return null;
             }
             
@@ -268,16 +263,16 @@ public class NotificationService {
             
             if (metadata.isPresent()) {
                 String owner = metadata.get().getOwner();
-                log.debug("📄 Document owner found: {}", owner);
+                log.debug(" Document owner found: {}", owner);
                 return owner;
             } else {
-                log.warn("⚠️ Document not found with ID: {}", documentId);
+                log.warn(" Document not found with ID: {}", documentId);
             }
             
         } catch (NumberFormatException e) {
-            log.error("❌ Invalid document ID format: {}", documentId);
+            log.error(" Invalid document ID format: {}", documentId);
         } catch (Exception e) {
-            log.error("❌ Error fetching document owner for ID: {}", documentId, e);
+            log.error(" Error fetching document owner for ID: {}", documentId, e);
         }
         
         return null;
@@ -286,11 +281,11 @@ public class NotificationService {
     private List<String> getReviewersList() {
         List<String> reviewers = new ArrayList<>();
         
-        // For now, i have add this hardcoded list
-        // In production,we need to  fetch from LDAP groups
+        // For now, it is hardcoded
+       
         reviewers.add("reviewer");
         
-        log.debug("📋 Retrieved {} reviewers", reviewers.size());
+        log.debug(" Retrieved {} reviewers", reviewers.size());
         return reviewers;
     }
 
@@ -301,11 +296,11 @@ public class NotificationService {
      
         approvers.add("approver");
         
-        log.debug("📋 Retrieved {} approvers", approvers.size());
+        log.debug(" Retrieved {} approvers", approvers.size());
         return approvers;
     }
 
-    // Public Utility Methods 
+    //  Utility Methods 
   
     public List<Notification> getNotificationsForUser(String username) {
         if (notificationRepository != null) {

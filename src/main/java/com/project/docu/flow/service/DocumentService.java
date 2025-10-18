@@ -91,23 +91,14 @@ public class DocumentService {
         return savedMetadata;
     }
 
-    /**
-     * Save document content
-     */
     public DocumentContent saveDocumentContent(DocumentContent content) {
         return contentRepo.save(content);
     }
 
-    /**
-     * Save metadata with event publishing
-     */
     public DocumentMetadata saveMetadata(DocumentMetadata metadata) {
         return metadataRepo.save(metadata);
     }
     
-    /**
-     * Update document status and publish event
-     */
     public DocumentMetadata updateDocumentStatus(Long metadataId, String newStatus, String userId, String userName, String comments) {
         Optional<DocumentMetadata> metaOpt = metadataRepo.findById(metadataId);
         
@@ -137,44 +128,29 @@ public class DocumentService {
         return updated;
     }
 
-    /**
-     * Get document content by id
-     */
+
     public Optional<DocumentContent> getDocumentContentById(String mongoId) {
         return contentRepo.findById(mongoId);
     }
 
-    /**
-     * Get metadata by id
-     */
     public Optional<DocumentMetadata> getMetadata(Long id) {
         return metadataRepo.findById(id);
     }
 
-    /**
-     * Find all metadata by owner
-     */
+
     public List<DocumentMetadata> findByOwner(String owner) {
         return metadataRepo.findByOwner(owner);
     }
 
-    /**
-     * Delete metadata
-     */
     public void deleteMetadata(Long id) {
         metadataRepo.deleteById(id);
     }
 
-    /**
-     * Delete document content
-     */
     public void deleteDocumentContent(String id) {
         contentRepo.deleteById(id);
     }
 
-    /**
-     * Find documents by statuses
-     */
+
     public List<DocumentMetadata> findByStatuses(List<String> statuses) {
         if (statuses == null || statuses.isEmpty()) {
             return List.of();
@@ -182,23 +158,14 @@ public class DocumentService {
         return metadataRepo.findByStatusIn(statuses);
     }
 
-    /**
-     * Find documents for reviewer
-     */
     public List<DocumentMetadata> findForReviewer() {
         return findByStatuses(Arrays.asList("SUBMITTED", "FORWARDED", "CHANGES_REQUESTED", "REJECTED"));
     }
 
-    /**
-     * Find documents for approver
-     */
     public List<DocumentMetadata> findForApprover() {
         return findByStatuses(Arrays.asList("FORWARDED", "APPROVER_REJECTED", "APPROVED"));
     }
 
-    /**
-     * Helper method to publish document events to Pulsar
-     */
     private void publishDocumentEvent(
             DocumentMetadata metadata,
             DocumentEvent.EventType eventType,
@@ -269,9 +236,6 @@ public class DocumentService {
         }
     }
 
-    /**
-     * Map status string to WorkflowStatus enum
-     */
     private DocumentEvent.WorkflowStatus mapStringToWorkflowStatus(String status) {
         if (status == null) {
 			return null;

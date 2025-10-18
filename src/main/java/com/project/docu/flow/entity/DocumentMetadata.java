@@ -34,7 +34,7 @@ public class DocumentMetadata {
 	@Column(nullable = false)
 	private String owner; 
 	@Column(nullable = false)
-	private String status; // DRAFT, SUBMITTED, CHANGES_REQUESTED,,FORWORDED APPROVED, REJECTED
+	private String status; // DRAFT, SUBMITTED, CHANGES_REQUESTED,FORWORDED, APPROVED, REJECTED
 	private String description;
 	@Column(name = "file_type")
 	private String fileType;
