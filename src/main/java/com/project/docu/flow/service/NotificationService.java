@@ -12,6 +12,7 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 import org.springframework.stereotype.Service;
 
 import com.project.docu.flow.entity.DocumentMetadata;
+import com.project.docu.flow.entity.LdapUser;
 import com.project.docu.flow.entity.Notification;
 import com.project.docu.flow.model.events.DocumentEvent;
 import com.project.docu.flow.repository.DocumentMetadataRepository;
@@ -35,18 +36,13 @@ public class NotificationService {
     @Autowired
     private EmailService emailService;
     
+    @Autowired
+    private LdapUserService ldapUserService;
+    
+    
     
     private String resolveEmailForUser(String username) {
-        switch (username) {
-            case "reviewer":
-                return "vishalfarade6844@gmail.com";
-            case "approver":
-                return "faradevishal@gmail.com";
-            case "submitter":
-                return "faradevishal@gmail.com";
-            default:
-                return null;
-        }
+        return ldapUserService.getEmailByUid(username);
     }
 
 
@@ -279,27 +275,21 @@ public class NotificationService {
     }
 
     private List<String> getReviewersList() {
-        List<String> reviewers = new ArrayList<>();
-        
-        // For now, it is hardcoded
-       
-        reviewers.add("reviewer");
-        
-        log.debug(" Retrieved {} reviewers", reviewers.size());
+        List<String> reviewers = ldapUserService.getUsersByGroup("Reviewers").stream()
+                .map(LdapUser::getUid)
+                .toList();
+        log.debug("Retrieved {} reviewers from LDAP", reviewers.size());
         return reviewers;
     }
 
 
     private List<String> getApproversList() {
-        List<String> approvers = new ArrayList<>();
-        
-     
-        approvers.add("approver");
-        
-        log.debug(" Retrieved {} approvers", approvers.size());
+        List<String> approvers = ldapUserService.getUsersByGroup("Approvers").stream()
+                .map(LdapUser::getUid)
+                .toList();
+        log.debug("Retrieved {} approvers from LDAP", approvers.size());
         return approvers;
     }
-
     //  Utility Methods 
   
     public List<Notification> getNotificationsForUser(String username) {
